@@ -5,6 +5,9 @@
 -p [any_positive_integer] -> Tells you how many prime numbers are before the given number (inclusive).
 -n [any_positive_integer] -> Returns the nth prime, being -n-th the given number.
 -i [any_positive_integer] -> Tells wheter the given number is prime.
+-f [any_positive_integer] -> Prints or saves on a file the first n prime numbers, where n is the passed number.
+-m [any_positive_integer] -> Saves on a pointer the first prime numbers that fit in X MB, where X is the passed number.
+
 */
 
 #include <stdio.h>
@@ -14,20 +17,28 @@
 #include <math.h>
 #include <time.h>
 
-unsigned long long* primesInTime(unsigned int timeInSeconds, unsigned int memAvailable);
-void delay(unsigned int seconds);
+
+void firstNPrimes(unsigned long long n);
 unsigned long long nthPrime(unsigned long long top);
 bool isPrime(unsigned long long int n);
-int askIfDisplay(void);
-void displayPrimes(unsigned long long arraySize, unsigned long long *allPrimes, unsigned int blockSize);
-bool askIfSave(void);
-int savePrimesInDisk(unsigned long long arraySize, unsigned long long *allPrimes);
 unsigned long long piFunction(unsigned long long n);
-void menu(char* argv[]);
+void primesInTime(unsigned int timeInSeconds);
+unsigned long long *primesInMemory(unsigned long long megaBytes);
 
-unsigned long long *primes;
+void pause(void);
+int inBlocks(const char* output);
+bool askIfSave(void);
+void menu(char* argv[]);
+char *setFileName(void);
+
+char *fileName;
+
 int main(int argc, char* argv[])
 {
+	char fn[11] = "primes.txt";
+	fileName = fn;
+	fileName = setFileName();
+
 	menu(argv);
 	return 0;
 }
@@ -39,7 +50,7 @@ void menu(char *argv[])
 	switch(opc[0])
 	{
 		case 't':
-			primesInTime( atoi(argv[2]), atoi(argv[3]) );
+			primesInTime( atoi(argv[2]) );
 		break;
 
 		case 'p':
@@ -57,18 +68,38 @@ void menu(char *argv[])
 				printf("\nIt's NOT prime number.\n");
 		break;
 
+		case 'f':
+			firstNPrimes( atoi(argv[2]) );
+		break;
+
+		case 'm':
+			primesInMemory( atoi(argv[2]) );
+		break;
+
 	};
 	return;
 	
 }
 
-void delay(unsigned int seconds)
+bool isPrime(unsigned long long int n)
 {
-	clock_t tOneScond, tCounter;
-	tCounter = clock();
-	tOneScond = clock()+CLOCKS_PER_SEC;
-	while(tCounter < tOneScond)
-		tCounter = clock();
+	unsigned long long divisor;
+	divisor = 5; 
+/* using the 6k +- 1 optimization: all primes greater than 6 are of the form 6k +- 1. This is because all integers can be expressed as (6k+i) for some integer k and for i = -1, 0, 1, 2, 3 or 4; 2 divides (6k + 0), (6k + 2) and (6k + 4) and 3 divides (6k + 3). */
+	if( n <= 3 )
+		return true;
+	else if( n%2 == 0 || n%3 == 0)// is not prime if can be divided by 2 or 3
+		return false;
+	else
+		while(divisor*divisor <= n)
+		{
+/* we need only integer divisors less than or equal sqroot(n). Factors greater than that will result in a number always lower than n or always greater. */
+			if(n%divisor == 0 || n%(divisor+2) == 0 ) // if it can be divided by divisor or if divisor is even 
+				return false;
+			else
+				divisor+=6;
+		}
+	return true;
 }
 
 unsigned long long piFunction(unsigned long long n)
@@ -95,16 +126,18 @@ unsigned long long nthPrime(unsigned long long n)
 	return prime;
 }
 
-
-unsigned long long* primesInTime(unsigned int timeInSeconds, unsigned int memAvailable)
+void primesInTime(unsigned int timeInSeconds)
 {
-	const unsigned int ONE_MILLION = 1024*1024;
-	int blockSize;
-	unsigned long long n = 2, nPrimes, index = 0, totalAmount = 0;
+	int block = -1;
+	unsigned long long n = 2, index = 1;
+	bool save;
 	clock_t timeUp, tCounter;
+	FILE *stream;
 
-	nPrimes = memAvailable*ONE_MILLION/sizeof(unsigned long long);
-	primes = calloc(memAvailable*ONE_MILLION/sizeof(unsigned long long), sizeof(unsigned long long) );
+	save = askIfSave();
+	stream = save ? fopen(fileName, "a") : stdout;
+	
+	block = save ? inBlocks("save") : inBlocks("display");
 	
 	tCounter = clock();
 	timeUp = clock() + ( CLOCKS_PER_SEC*timeInSeconds );
@@ -113,65 +146,121 @@ unsigned long long* primesInTime(unsigned int timeInSeconds, unsigned int memAva
 	{
 		
 		if( isPrime(n) )
-			primes[index++] = n;
-		if(index == nPrimes)
 		{
-			totalAmount += index;
-			printf("\n%llu new prime numbers have been found.\n", index);
-			printf("\nThere's no more space available out of the %u MB that you provided in memory.\n", memAvailable);	
-			if( askIfSave() )
+			fprintf(stream, "%llu,", n);
+			if(block !=-1 && index%block == 0)
 			{
-				savePrimesInDisk(index, primes);
-				free(primes);
-				primes = calloc(memAvailable*ONE_MILLION, sizeof(unsigned long long) );
-				index = 0;
+				if(save)
+					fprintf(stream, "\n");
+				else
+					pause();
 			}
-			else if( (blockSize = askIfDisplay() ) != -1 )
-			{
-				displayPrimes( index, primes, blockSize );
-				free(primes);
-				primes = calloc(memAvailable*ONE_MILLION, sizeof(unsigned long long) );
-				index = 0;
-			}
+			index++;
 		}
-		n++;			
+		n++;		
 		tCounter = clock();		
 	}
-	totalAmount += index;
-	if( askIfSave() )
-	{
-		if( savePrimesInDisk(index, primes) == 0)
-			printf("\n\nYour %llu prime numbers have been saved.\n", index);
-		free(primes);
-	}
-	else if( (blockSize = askIfDisplay() ) != -1 )
-		displayPrimes( index, primes, blockSize );
 
-	printf("\n\nA total of %llu prime numbers have been found.\n", totalAmount);
+	if(save)
+	{
+		printf("\n\nYour %llu prime numbers have been saved at %s.\n", index, fileName);
+		fclose(stream);
+	}
+	else
+		printf("\n\nA total of %llu prime numbers have been found.\n", index);
+}
+
+void firstNPrimes(unsigned long long n)
+{
+	unsigned long long prime = 1, index = 1;
+	int block = -1;
+	FILE *stream;
+	bool save;
 	
+	save = askIfSave();
+	stream = save ? fopen(fileName, "a") : stdout;
+
+	block = save ? inBlocks("save") : inBlocks("display");
+		
+	while(index <= n)
+	{
+		prime++;
+		if( isPrime(prime) )
+		{
+			fprintf(stream, "%llu,", prime);
+			if(block !=-1 && index%block == 0)
+			{
+				if(save)
+					fprintf(stream, "\n");
+				else
+					pause();
+			}
+			index++;
+		}
+	}
+	if(save)
+	{
+		printf("\n\nYour %llu prime numbers have been saved at %s.\n", n, fileName);
+		fclose(stream);
+	}
+	printf("\n");
+	return;
+}
+
+unsigned long long *primesInMemory(unsigned long long megaBytes)
+{
+	unsigned long long *primes, nPrimes, index = 1, prime = 1;
+	const unsigned int ONE_MILLION = 1024*1024;
+	int block = -1;
+	bool save;
+	FILE *stream;
+
+	save = askIfSave();
+	stream = save ? fopen(fileName, "a") : stdout;
+	
+	block = save ? inBlocks("save") : inBlocks("display");
+	
+	nPrimes = (megaBytes*ONE_MILLION)/sizeof(unsigned long long);
+	primes = calloc( nPrimes, sizeof(unsigned long long) );
+
+	while(index < nPrimes)
+	{
+		prime++;
+		if( isPrime(prime) )
+		{
+			primes[index] = prime;
+
+			fprintf(stream, "%llu,", prime);
+			if(block !=-1 && index%block == 0)
+			{
+				if(save)
+					fprintf(stream, "\n");
+				else
+					pause();
+			}
+			index++;
+		}
+	}
+
+	if(save)
+	{
+		printf("\n\nYour %llu prime numbers have been saved at %s.\n", index, fileName);
+		fclose(stream);
+	}
+	else
+		printf("\n\nA total of %llu prime numbers have been found.\n", index);
+	
+	pause();
+	
+	primes[0] = nPrimes;
 	return primes;
 }
 
-int savePrimesInDisk(unsigned long long arraySize, unsigned long long *allPrimes)
-{
-	FILE *primesInDisk;
-	primesInDisk = fopen("primes.txt", "a");
-	unsigned long long index = 0;
-	while(index < arraySize)
-	{
-		fprintf(primesInDisk, "%llu,", allPrimes[index]);
-		if(index%100 == 0 && index > 0)
-			fprintf(primesInDisk, "\n");
-		index++;
-	}
-	//return 0;
-	return fclose(primesInDisk);
-}
 
 bool askIfSave(void)
 {
 	char answer;
-	printf("\nWould you wish to store them in disc and continue? (y/n)\n");
+	printf("\nWould you wish to store them in disc? (y/n)\n");
 	scanf(" %c", &answer);
 
 	if( answer == 'y')
@@ -180,57 +269,47 @@ bool askIfSave(void)
 		return false;	
 }
 
-int askIfDisplay(void)
+int inBlocks(const char* output)
 {
 	char answer;
-	printf("\nWould you wish to display them in blocks? (y/n)\n");
+	printf("\nWould you wish to %s them in blocks? (y/n)\n", output);
 	scanf(" %c", &answer);
 
 	if( answer == 'y')
 	{
 		int size = 0;
 		printf("Please provide the size of the block (0-300):");
-		scanf("%i", &size);
+		scanf(" %i", &size);
 		return size;
 	}
 	else
 		return -1;
 }
 
-void displayPrimes(unsigned long long arraySize, unsigned long long *allPrimes, unsigned int blockSize)
+char *setFileName(void)
 {
-	do
+	char answer, *newName;
+	printf("\nThe current file's name is: %s", fileName);
+	printf("\nWould you wish to change it? (y/n)\n");
+	scanf(" %c", &answer);
+
+	if( answer == 'y')
 	{
-		arraySize--;
-		printf("%llu\n", allPrimes[arraySize]);
-
-		if( arraySize%blockSize == 0 )
-		{
-			printf("\n\nPress any key to continue...\n");
-			getchar();
-		}
-			
-	}while(arraySize > 0);
-	return;
-}
-
-bool isPrime(unsigned long long int n)
-{
-	unsigned long long divisor;
-	divisor = 5; 
-/* using the 6k +- 1 optimization: all primes greater than 6 are of the form 6k +- 1. This is because all integers can be expressed as (6k+i) for some integer k and for i = -1, 0, 1, 2, 3 or 4; 2 divides (6k + 0), (6k + 2) and (6k + 4) and 3 divides (6k + 3). */
-	if( n <= 3 )
-		return true;
-	else if( n%2 == 0 || n%3 == 0)// is not prime if can be divided by 2 or 3
-		return false;
+		newName = calloc(256, sizeof(char));
+		printf("Please provide the new file name: ");
+		scanf(" %s", newName);
+		return newName;
+	}
 	else
-		while(divisor*divisor <= n)
-		{
-/* we need only integer divisors less than or equal sqroot(n). Factors greater than that will result in a number always lower than n or always greater. */
-			if(n%divisor == 0 || n%(divisor+2) == 0 ) // if it can be divided by divisor or if divisor is even 
-				return false;
-			else
-				divisor+=6;
-		}
-	return true;
+		return fileName;
 }
+
+void pause(void)
+{
+	getchar();
+	printf("\nPress any key to continue...");
+	getchar();
+	printf("\n");	
+}
+
+

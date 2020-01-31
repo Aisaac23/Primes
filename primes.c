@@ -16,6 +16,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <time.h>
+#include "chkops.h"
 
 
 void firstNPrimes(unsigned long long n);
@@ -28,7 +29,7 @@ unsigned long long *primesInMemory(unsigned long long megaBytes);
 void pause(void);
 int inBlocks(const char* output);
 bool askIfSave(void);
-void menu(char* argv[]);
+int menu(char* argv[]);
 char *setFileName(void);
 
 char *fileName;
@@ -39,45 +40,60 @@ int main(int argc, char* argv[])
 	fileName = fn;
 	fileName = setFileName();
 
-	menu(argv);
-	return 0;
+	if(menu(argv) == -1 || argc < 4)
+	{
+		printf("Arguments missing or with the wrong format in: %s\n", argv[0]);
+		exit(EXIT_SUCCESS);
+	}
+	return EXIT_SUCCESS;
 }
 
-void menu(char *argv[])
+int menu(char *argv[])
 {
 	char opc[1];
 	opc[0] = argv[1][1];
+	if(argv[1][0] != '-')
+		return -1;
+
 	switch(opc[0])
 	{
 		case 't':
-			primesInTime( atoi(argv[2]) );
+			if( isUnsignedInteger( argv[2] ) )
+				primesInTime( atoi(argv[2]) );
 		break;
 
 		case 'p':
-			printf("There are %llu primes lower or equal than %llu.\n", piFunction( atoi(argv[2]) ), (unsigned long long)atoi(argv[2]) );
+			if( isUnsignedInteger( argv[2] ) )
+				printf("There are %llu primes lower or equal than %llu.\n", piFunction( atoi(argv[2]) ), (unsigned long long)atoi(argv[2]) );
 		break;
 
 		case 'n':
-			printf("The %llu-nth prime is %llu.\n", (unsigned long long)atoi(argv[2]), nthPrime( atoi(argv[2]) ) );
+			if( isUnsignedInteger( argv[2] ) )
+				printf("The %llu-nth prime is %llu.\n", (unsigned long long)atoi(argv[2]), nthPrime( atoi(argv[2]) ) );
 		break;
 		
 		case 'i':
-			if( isPrime( atoi(argv[2] ) ) )
-				printf("\nIt IS prime number.\n");
-			else
-				printf("\nIt's NOT prime number.\n");
+			if( isUnsignedInteger( argv[2] ) )
+			{
+				if( isPrime( atoi(argv[2] ) ) )
+					printf("\nIt IS prime number.\n");
+				else
+					printf("\nIt's NOT prime number.\n");
+			}
 		break;
 
 		case 'f':
-			firstNPrimes( atoi(argv[2]) );
+			if( isUnsignedInteger( argv[2] ) )
+				firstNPrimes( atoi(argv[2]) );
 		break;
 
 		case 'm':
-			primesInMemory( atoi(argv[2]) );
+			if( isUnsignedInteger( argv[2] ) )
+				primesInMemory( atoi(argv[2]) );
 		break;
 
 	};
-	return;
+	return -1;
 	
 }
 

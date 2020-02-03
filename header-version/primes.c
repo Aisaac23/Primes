@@ -1,5 +1,6 @@
 #include "primes.h"
 
+//Tells wheter the given number is prime.
 bool isPrime(unsigned long long int n)
 {
 	unsigned long long divisor;
@@ -21,6 +22,7 @@ bool isPrime(unsigned long long int n)
 	return true;
 }
 
+//Tells you how many prime numbers are before the given number (inclusive).
 unsigned long long piFunction(unsigned long long n)
 {
 	unsigned long long prime = 1, index = 0;
@@ -33,6 +35,7 @@ unsigned long long piFunction(unsigned long long n)
 	return index;
 }
 
+//Returns the nth prime, being -n-th the given number.
 unsigned long long nthPrime(unsigned long long n)
 {
 	unsigned long long prime = 1, index = 1;
@@ -45,6 +48,7 @@ unsigned long long nthPrime(unsigned long long n)
 	return prime;
 }
 
+/*Prints or saves on a file all the possible prime numbers in the given time. If the name passed is a valid file name it will save them there, otherwise it will print them. It will print them on either stream (file/stdout) in a csv format with record size indicated by the blocks arg. */
 void primesInTime(unsigned int timeInSeconds, char *fileName, unsigned int block)
 {
 	unsigned long long n = 2, index = 1;
@@ -78,6 +82,8 @@ void primesInTime(unsigned int timeInSeconds, char *fileName, unsigned int block
 	}
 }
 
+/*Prints or saves on a file the first n prime numbers, where n is the passed number. If the name passed is a valid file name it will save them there, otherwise it will print them. It will print them on either stream (file/stdout) in a csv format with record size indicated by the blocks arg.*/
+
 void firstNPrimes(unsigned long long n, char *fileName, unsigned int block)
 {
 	unsigned long long prime = 1, index = 1;
@@ -105,6 +111,7 @@ void firstNPrimes(unsigned long long n, char *fileName, unsigned int block)
 	return;
 }
 
+/*Saves on a pointer the first prime numbers that fit in X MB, where X is the passed number.*/
 unsigned long long *primesInMemory(unsigned long long megaBytes)
 {
 	unsigned long long *primes, nPrimes, index = 1, prime = 1;

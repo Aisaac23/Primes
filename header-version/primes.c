@@ -1,6 +1,6 @@
 #include "primes.h"
 
-//Tells wheter the given number is prime.
+//Tells wheter the given number is prime WITHOUT any given list of primes.
 bool isPrime(unsigned long long int n)
 {
 	unsigned long long divisor;

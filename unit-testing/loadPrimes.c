@@ -46,7 +46,7 @@ unsigned long long* loadPrimes(char *fileName, unsigned long long memLimit)
 	primeList = malloc( memLimit*sizeof(unsigned long long) );
 	first_ptr = primeList;
 	
-	while( memLimit > 0 )//only testing the primes < sqrt(n+2) and we stop if both are composite.
+	while( memLimit > 0 )
 	{
 		fscanf(primesFileR, "%s", primeBuff);
 		divisor = strtoull(primeBuff, NULL, 10);

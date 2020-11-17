@@ -36,18 +36,21 @@ int main(int argc, char* argv[])
 bool isPrime_L2(unsigned long long int n)
 {
 	unsigned long long divisor;
-	divisor = 5; 
-	if( n <= 3 )
+	divisor = 5;
+ 
+	if( n < 2)
+		return false;
+	else if( n <= 3 )
 		return true;
 	else if( n%2 == 0 || n%3 == 0)// is not prime if can be divided by 2 or 3
 		return false;
 	else
-		while(divisor*divisor <= n)
+		while(divisor*divisor <= n)// this is also a simple form but a litle faster. 
 		{
-			if( n%divisor == 0 )
-				return false;
+			if( n%divisor == 0 )// sqrt(n) is the greatest factor of n where the two factors are the same. 
+				return false; // we cannot find a factor greater than sqrt(n) because it'd yield a number greater than n.
 			else
-				divisor++;
+				divisor++; // additionally, being sqrt(n) = m, any divisor found in m is also a divisor in m for m*m = n.
 		}
 	return true;
 }

@@ -1,10 +1,28 @@
 # Primes
-This program could take as argument the following:
+This is a project created with the purpose of studying prime numbers. It's a work in progress but so far here's what I've found and created:
 
-* -t [time_in_seconds] [space_in_memory_in_MB] -> generates all the possible prime numbers in the given time, without going over the given space in memory. If there's still time left but no space, then it gives you the option to save them in a file or display them and continue.
+* isPrime function: fastest known algorithm so far (in this project) to test primality.
+* piFunction: tells you how many primes there are before any given n (inclusive). Take **ULLONG_MAX** from **limits.h** as the max value this function can take.
+* storePrimes: a function to find primes and register them in a plain text file.
+* loadPrimes: loads all the possible primes from a given list until a memory limit is reached.
+* isPrime_L1: slowest and siplest primality test algorithm.
+* isPrime_L2: a little faster than isPrime_L1.
+* nthPrime: gives you the nth prime, e.g. for input 5, it returns 11, the 5th prime.
+* isPrimeWList: uses a pre-computed list, could be using loadPrimes, to test primality.
 
-* -p [any_positive_integer] -> Tells you how many prime numbers are before the given number (inclusive).
-* -n [any_positive_integer] -> Returns the nth prime, being -n-th the given number.
-* -i [any_positive_integer] -> Tells wheter the given number is prime.
-* -f [any_positive_integer] -> Prints or saves on a file the first n prime numbers, where n is the passed number.
-* -m [any_positive_integer] -> Saves on a pointer the first prime numbers that fit in X MB, where X is the passed number.
+#### Remarks
+* Greatest prime found: 3004602589
+* Max amount of primes stored: 144660217
+* Size of file where they're stored: 1.0 GB
+* Hours to find them: 28.15 
+* Greatest prime testes in 52 seconds: 18446744003700551681
+* Mathematical forms to use to find primes:
+	* divisor <= **n/2**
+	* divisor <= square root of **n**
+	* **6k +- 1** <= square root of **n**
+
+##### Goals and future steps:
+
+* Find a pure mathematical way to test primes faster.
+* Store as many primes as possible.
+* Find primes greater than **ULLONG_MAX**.

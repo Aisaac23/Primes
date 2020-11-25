@@ -47,10 +47,9 @@ unsigned long long piFunction(unsigned long long n)
 	else
 		while(index <= n)
 		{
-/* we need only integer divisors less than or equal sqroot(n). Factors greater than that will result in a number always lower than n or always greater. */
 			if( isPrime(index) )
 				primes++;
-			if( isPrime(index+2) && index+2 <= n)
+			if( isPrime(index+2) && index+2 <= n )
 				primes++;
 			index+=6;
 		}

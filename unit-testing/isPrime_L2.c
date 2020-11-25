@@ -3,8 +3,6 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <time.h>
-#include <math.h>
-#include <float.h>
 
 bool isPrime_L2(unsigned long long int n);
 

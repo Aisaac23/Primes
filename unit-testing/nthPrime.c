@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 
 	printf("%llu_Prime: %llu\n", n, nth_Prime);
 
-	printf("\nElapsed time: %f\n", elapsed);
+	printf("Elapsed time: %f\n\n", elapsed);
 	return EXIT_SUCCESS;
 }
 
@@ -47,7 +47,6 @@ unsigned long long nthPrime(unsigned long long n)
 	else
 		while(primes < n)
 		{
-/* we need only integer divisors less than or equal sqroot(n). Factors greater than that will result in a number always lower than n or always greater. */
 			if( isPrime(index) )
 			{
 				primes++;

@@ -14,6 +14,3 @@
 ./nthPrime 298765
 ./nthPrime 3967658
 ./nthPrime 49876590
-
-
-

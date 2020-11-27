@@ -15,6 +15,3 @@
 ./piFunction 3967658
 ./piFunction 49876590
 ./piFunction 498765907
-
-
-

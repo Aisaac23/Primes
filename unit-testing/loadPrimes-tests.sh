@@ -8,7 +8,3 @@
 ./loadPrimes primes.txt 2147483648
 
 ./loadPrimes primes_small.txt 1024
-
-
-
-

@@ -8,13 +8,21 @@
 #include <math.h>
 #include <time.h>
 
-void firstNPrimes(unsigned long long n, char *fileName, unsigned int block);
-void primesInTime(unsigned int timeInSeconds, char *fileName, unsigned int block);
-
-unsigned long long nthPrime(unsigned long long top);
-unsigned long long piFunction(unsigned long long n);
-unsigned long long *primesInMemory(unsigned long long megaBytes);
+volatile bool LIST_ALL_PRIMES_STOP;
 
 bool isPrime(unsigned long long int n);
+
+bool isPrime2(unsigned long long int n);
+
+bool isPrime_L1(unsigned long long int n);
+bool isPrime_L2(unsigned long long int n);
+bool isPrimeSqrt(unsigned long long int n);
+
+unsigned long long nthPrime(unsigned long long n);
+unsigned long long piFunction(unsigned long long n);
+
+bool isPrime_WList(unsigned long long n, unsigned long long *primeList, unsigned long long listLimit);
+unsigned long long* loadPrimes(char *fileName, unsigned long long *memLimit);
+void listAllPrimes(char *fileName, unsigned long long memLimit);
 
 #endif

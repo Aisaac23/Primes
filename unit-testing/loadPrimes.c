@@ -3,9 +3,7 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <time.h>
-
-
-unsigned long long* loadPrimes(char *fileName, unsigned long long *memLimit);
+#include "primes.h"
 
 int main(int argc, char* argv[])
 {
@@ -34,32 +32,5 @@ int main(int argc, char* argv[])
 	printf("\n");
 
 	return EXIT_SUCCESS;
-}
-
-unsigned long long* loadPrimes(char *fileName, unsigned long long *memLimit)
-{
-
-	unsigned long long *primeList, divisor, *first_ptr;
-	const unsigned int DEC_DIGITS = 21;// 2^64 is 20 digits long.
-	char primeBuff[DEC_DIGITS];
-  
-	FILE *primesFileR;
-
-	primesFileR = fopen(fileName, "r");//opening the file for reading 
-
-	primeList = malloc( (*memLimit)*sizeof(unsigned long long) );
-	first_ptr = primeList; // we save the first pointer to the allocated memory (valid pointer).
-	
-	while( (*memLimit) > 0 && fscanf(primesFileR, "%s", primeBuff) != EOF)//getting primes from text file until memory limit or EOF.
-	{
-		divisor = strtoull(primeBuff, NULL, 10);
-		*primeList = divisor;
-
-		primeList++;
-		(*memLimit)--;
-	}
-
-	fclose(primesFileR);
-	return first_ptr;
 }
 

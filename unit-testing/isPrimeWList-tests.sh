@@ -2,12 +2,6 @@
 
 ./isPrime 1844674407370955197
 ./isPrime 7919
-./isPrime 2
-./isPrime 1
-./isPrime 0
-./isPrime 3
-./isPrime 5
-./isPrime 7
 ./isPrime 8731
 ./isPrime 2844674407370955239
 ./isPrime 3844674407370955331
@@ -20,5 +14,3 @@
 ./isPrime 18446744003700551681
 
 ./isPrimeWList "primes.txt" 268435456 
-
-

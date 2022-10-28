@@ -5,49 +5,26 @@ bool isPrime(unsigned long long n)
 {
 	unsigned long long divisor;
 	divisor = 5; 
-/* using the 6k +- 1 optimization: all primes greater than 6 are of the form 6k +- 1. This is because all integers can be expressed as (6k+i) for some integer k and for i = -1, 0, 1, 2, 3 or 4; 2 divides (6k + 0), (6k + 2) and (6k + 4) and 3 divides (6k + 3). */
-	if( n <= 3 )
+/* using the 6k +- 1 optimization: all primes greater than 6 are of the form 6k +- 1. 
+This is because all integers can be expressed as (6k+i) for some integer k and for i = -1, 0, 1, 2, 3 or 4; 
+2 divides (6k + 0), (6k + 2) and (6k + 4) and 3 divides (6k + 3). */
+	if( n < 2 )
+		return false;
+	else if( n < 4 )
 		return true;
 	else if( n%2 == 0 || n%3 == 0)// is not prime if can be divided by 2 or 3
 		return false;
 	else
 		while(divisor*divisor <= n)
 		{
-/* we need only integer divisors less than or equal sqroot(n). Factors greater than that will result in a number always lower than n or always greater. */
-			if(n%divisor == 0 || n%(divisor+2) == 0 ) // if it can be divided by divisor or if divisor is even 
+/* we need only integer divisors less than or equal sqroot(n). 
+Factors greater than that will result in a number always greater than n. */
+			if( n%divisor == 0 || n%(divisor+2) == 0 ) // Here we test primes against n but also we need to test obvious numbers like 25
 				return false;
 			else
 				divisor+=6;
 		}
-	return true;
-}
 
-//Tells wheter the given number is prime WITHOUT any given list of primes.
-bool isPrime2(unsigned long long int n)
-{
-	unsigned long long divisor;
-	divisor = 5; 
-/* using the 6k +- 1 optimization: all primes greater than 6 are of the form 6k +- 1. This is because all integers can be expressed as (6k+i) for some integer k and for i = -1, 0, 1, 2, 3 or 4; 2 divides (6k + 0), (6k + 2) and (6k + 4) and 3 divides (6k + 3). */
-	if( n < 2 )
-		return false;
-	else if( n <= 3 )
-		return true;
-	else if( n%2 == 0 || n%3 == 0)// is not prime if can be divided by 2 or 3 or is 1
-		return false;
-	else
-	{
-		while(divisor*divisor <= n)/*Only integer divisors <= sqroot(n). Factors greater than that will result in a number always > n. */
-			if( n%divisor == 0 ) // testing 6k-1 (n%divisor) and 6k+1 (n%(divisors+2))
-				return false;
-			else
-				divisor+=6;
-		divisor = 7;
-		while(divisor*divisor <= n)/*Only integer divisors <= sqroot(n). Factors greater than that will result in a number always > n. */
-			if( n%divisor == 0 ) // testing 6k-1 (n%divisor) and 6k+1 (n%(divisors+2))
-				return false;
-			else
-				divisor+=6;
-	}
 	return true;
 }
 

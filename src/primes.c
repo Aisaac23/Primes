@@ -15,7 +15,7 @@ This is because all integers can be expressed as (6k+i) for some integer k and f
 	else if( n%2 == 0 || n%3 == 0)// is not prime if can be divided by 2 or 3
 		return false;
 	else
-		while(divisor*divisor <= n)
+		do
 		{
 /* we need only integer divisors less than or equal sqroot(n). 
 Factors greater than that will result in a number always greater than n. */
@@ -23,7 +23,7 @@ Factors greater than that will result in a number always greater than n. */
 				return false;
 			else
 				divisor+=6;
-		}
+		}while(divisor*divisor < n)
 
 	return true;
 }
